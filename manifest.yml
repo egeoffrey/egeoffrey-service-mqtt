@@ -1,0 +1,7 @@
+version: 1.0
+git: https://github.com/myhouse-project/myhouse-service-mqtt
+docker: https://cloud.docker.com/u/myhouseproject/repository/docker/myhouseproject/myhouse-service-mqtt
+default_config:
+  - service/mqtt:
+      hostname: myhouse-gateway
+      port: 1883

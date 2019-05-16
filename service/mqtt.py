@@ -95,7 +95,6 @@ class Mqtt(Service):
         
     # What to do when receiving a request for this module
     def on_message(self, message):
-        print message.dump()
         sensor_id = message.args
         if message.command == "OUT":
             if not self.mqtt_connected: return
@@ -110,7 +109,7 @@ class Mqtt(Service):
     def subscribe_topic(self, topic):
         self.log_debug("Subscribing to the MQTT topic "+topic)
         self.topics_subscribed.append(topic)
-        self.client.subscribe(topic)      
+        self.client.subscribe(topic)        
 
     # What to do when receiving a new/updated configuration for this module    
     def on_configuration(self,message):

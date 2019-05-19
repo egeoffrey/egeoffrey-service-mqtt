@@ -1,6 +1,9 @@
-version: 1.0
-git: https://github.com/myhouse-project/myhouse-service-mqtt
-docker: https://cloud.docker.com/u/myhouseproject/repository/docker/myhouseproject/myhouse-service-mqtt
+package: myhouse-service-mqtt
+revision: 1
+version: development
+git: myhouse-project/myhouse-service-mqtt
+modules:
+  - service/mqtt
 default_config:
   - service/mqtt:
       hostname: myhouse-gateway

@@ -1,10 +1,6 @@
 package: myhouse-service-mqtt
-revision: 1
+revision: 2
 version: development
 git: myhouse-project/myhouse-service-mqtt
 modules:
   - service/mqtt
-default_config:
-  - service/mqtt:
-      hostname: myhouse-gateway
-      port: 1883

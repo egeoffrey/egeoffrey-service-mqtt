@@ -18,10 +18,10 @@
 
 import paho.mqtt.client as mqtt
 
-from sdk.module.service import Service
-from sdk.module.helpers.message import Message
+from sdk.python.module.service import Service
+from sdk.python.module.helpers.message import Message
 
-import sdk.utils.exceptions as exception
+import sdk.python.utils.exceptions as exception
 
 class Mqtt(Service):
     # What to do when initializing

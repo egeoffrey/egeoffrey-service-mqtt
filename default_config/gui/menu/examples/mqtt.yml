@@ -1,0 +1,4 @@
+icon: exchange-alt
+order: 2
+page: examples/mqtt
+text: MQTT Service

@@ -1,6 +1,9 @@
 package: myhouse-service-mqtt
 revision: 3
 version: development
-git: myhouse-project/myhouse-service-mqtt
+github: myhouse-project/myhouse-service-mqtt
+dockerhub: myhouse-project/myhouse-service-mqtt
+description: Interact with sensors through a mqtt broker
+tags: service mqtt
 modules:
   - service/mqtt

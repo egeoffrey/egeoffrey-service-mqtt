@@ -3,9 +3,9 @@
     sensor: examples/mqtt/mqtt_in
     size: 3
     title: MQTT In
-    type: value
+    widget: value
   - icon: exchange-alt
     sensor: examples/mqtt/mqtt_out
     size: 3
     title: MQTT Out
-    type: input
+    widget: input

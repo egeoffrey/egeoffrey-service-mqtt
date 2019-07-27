@@ -38,12 +38,13 @@ class Mqtt(Service):
         self.client = mqtt.Client()
         self.mqtt_connected = False
         # require configuration before starting up
-        self.add_configuration_listener(self.fullname, True)
+        self.config_schema = 2
+        self.add_configuration_listener(self.fullname, "+", True)
         
     # What to do when running
     def on_start(self):
         # request all sensors' configuration so to filter sensors of interest
-        self.add_configuration_listener("sensors/#")
+        self.add_configuration_listener("sensors/#", 1)
         # receive callback when conneting
         def on_connect(client, userdata, flags, rc):
             if rc == 0:
@@ -114,8 +115,10 @@ class Mqtt(Service):
     # What to do when receiving a new/updated configuration for this module    
     def on_configuration(self,message):
         # module's configuration
-        if message.args == self.fullname:
-            if not self.is_valid_module_configuration(["hostname", "port"], message.get_data()): return False
+        if message.args == self.fullname and not message.is_null:
+            if message.config_schema != self.config_schema: 
+                return False
+            if not self.is_valid_configuration(["hostname", "port"], message.get_data()): return False
             self.config = message.get_data()
         # sensors to register
         elif message.args.startswith("sensors/"):

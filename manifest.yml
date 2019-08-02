@@ -1,24 +1,25 @@
-manifest_schema: 1
-package: myhouse-service-mqtt
-revision: 5
-version: development
-github: myhouse-project/myhouse-service-mqtt
-dockerhub: myhouseproject/myhouse-service-mqtt
+branch: development
 description: Interact with sensors through a mqtt broker
-tags: service mqtt
+dockerhub: myhouseproject/myhouse-service-mqtt
+github: myhouse-project/myhouse-service-mqtt
+manifest_schema: 2
 modules:
-  - service/mqtt:
-      description: Interact with sensors through a mqtt broker
-      service_configuration: 
-        passive:
-          - name: topic
-            description: The topic to subscribe
-            format: string
-            placeholder: /sensors/in
-            required: true
-        actuator:
-          - name: topic
-            description: The topic to publish to
-            format: string
-            placeholder: /sensors/out
-            required: true
+- service/mqtt:
+    description: Interact with sensors through a mqtt broker
+    service_configuration:
+      actuator:
+      - description: The topic to publish to
+        format: string
+        name: topic
+        placeholder: /sensors/out
+        required: true
+      passive:
+      - description: The topic to subscribe
+        format: string
+        name: topic
+        placeholder: /sensors/in
+        required: true
+package: myhouse-service-mqtt
+revision: 6
+tags: service mqtt
+version: 1.0

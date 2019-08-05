@@ -2,6 +2,7 @@ branch: development
 description: Interact with sensors through a mqtt broker
 dockerhub: myhouseproject/myhouse-service-mqtt
 github: myhouse-project/myhouse-service-mqtt
+icon: project-diagram
 manifest_schema: 2
 modules:
 - service/mqtt:
@@ -20,6 +21,6 @@ modules:
         placeholder: /sensors/in
         required: true
 package: myhouse-service-mqtt
-revision: 6
+revision: 7
 tags: service mqtt
 version: 1.0

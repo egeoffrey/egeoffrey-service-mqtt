@@ -1,7 +1,7 @@
 branch: development
 description: Interact with sensors through a mqtt broker
-dockerhub: myhouseproject/myhouse-service-mqtt
-github: myhouse-project/myhouse-service-mqtt
+dockerhub: egeoffrey/egeoffrey-service-mqtt
+github: egeoffrey/egeoffrey-service-mqtt
 icon: project-diagram
 manifest_schema: 2
 modules:
@@ -20,7 +20,7 @@ modules:
         name: topic
         placeholder: /sensors/in
         required: true
-package: myhouse-service-mqtt
-revision: 7
+package: egeoffrey-service-mqtt
+revision: 8
 tags: service mqtt
 version: 1.0

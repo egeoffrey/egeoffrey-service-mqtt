@@ -74,7 +74,8 @@ class Mqtt(Service):
         # connect to the gateway
         try: 
             self.log_info("Connecting to MQTT gateway on "+self.config["hostname"]+":"+str(self.config["port"]))
-            if "username" in self.config and "password" in self.config: self.client.username_pw_set(self.config["username"], password=self.config["password"])
+            password = self.config["password"] if "password" in self.config else ""
+            if "username" in self.config: self.client.username_pw_set(self.config["username"], password=password)
             self.client.connect(self.config["hostname"], self.config["port"], 60)
         except Exception,e:
             self.log_warning("Unable to connect to the MQTT gateway "+self.config["hostname"]+":"+str(self.config["port"])+": "+exception.get(e))

@@ -7,6 +7,27 @@ manifest_schema: 2
 modules:
 - service/mqtt:
     description: Interact with sensors through a mqtt broker
+    module_configuration:
+    - description: The MQTT hostname to connect to
+      format: string
+      name: hostname
+      placeholder: egeoffrey-gateway
+      required: true
+    - description: The port of the MQTT broker
+      format: int
+      name: port
+      placeholder: 1883
+      required: true
+    - description: The username for authenticating against the mqtt broker
+      format: string
+      name: username
+      placeholder: username
+      required: false
+    - description: The password for authenticating against the mqtt broker
+      format: password
+      name: password
+      placeholder: password
+      required: false
     service_configuration:
       actuator:
       - description: The topic to publish to
@@ -21,6 +42,6 @@ modules:
         placeholder: /sensors/in
         required: true
 package: egeoffrey-service-mqtt
-revision: 8
+revision: 9
 tags: service mqtt
 version: 1.0

@@ -29,8 +29,6 @@ class Mqtt(Service):
         # TODO: reusing sdk mqtt class?
         # configuration
         self.config = {}
-        # map sensor_id with service configuration
-        self.sensors = {}
         # track the topics subscribed
         self.topics_to_subscribe = []
         self.topics_subscribed = []
@@ -38,13 +36,11 @@ class Mqtt(Service):
         self.client = mqtt.Client()
         self.mqtt_connected = False
         # require configuration before starting up
-        self.config_schema = 2
+        self.config_schema = 1
         self.add_configuration_listener(self.fullname, "+", True)
         
     # What to do when running
     def on_start(self):
-        # request all sensors' configuration so to filter sensors of interest
-        self.add_configuration_listener("sensors/#", 1)
         # receive callback when conneting
         def on_connect(client, userdata, flags, rc):
             if rc == 0:
@@ -121,28 +117,22 @@ class Mqtt(Service):
                 return False
             if not self.is_valid_configuration(["hostname", "port"], message.get_data()): return False
             self.config = message.get_data()
-        # sensors to register
-        elif message.args.startswith("sensors/"):
-            sensor_id = message.args.replace("sensors/","")
-            sensor = message.get_data()
-            # a sensor has been deleted
-            if message.is_null:
-                if sensor_id in self.sensors: 
-                    sensor = self.sensors[sensor_id]
-                    # unsubscribe from the topic
-                    self.client.unsubscribe(sensor["topic"])
-                    # delete the sensor
-                    del self.sensors[sensor_id]
-            # a sensor has been added/updated
+        # register/unregister the sensor
+        if message.args.startswith("sensors/"):
+            if message.is_null: 
+                sensor_id = message.args.replace("sensors/","")
+                # unsubscribe from the topic
+                if sensor_id in self.sensors:
+                    configuration = self.sensors[sensor_id]
+                    self.client.unsubscribe(configuration["topic"])
+                self.unregister_sensor(message)
             else: 
-                # filter in only relevant sensors
                 # TODO: certificate, client_id, ssl
-                if "service" not in sensor or sensor["service"]["name"] != self.name or sensor["service"]["mode"] != "passive": return
-                configuration = sensor["service"]["configuration"]
-                if not self.is_valid_configuration(["topic"], configuration): return
-                # keep track of the sensor's configuration
-                self.sensors[sensor_id] = configuration
-                # subscribe to the topic if connected, otherwise queue the request
-                if self.mqtt_connected: self.subscribe_topic(configuration["topic"])
-                else: self.topics_to_subscribe.append(configuration["topic"])
-                self.log_info("registered sensor "+sensor_id)
+                sensor_id = self.register_sensor(message, ["topic"])
+                if sensor_id is not None:
+                    # subscribe to the topic if connected, otherwise queue the request
+                    configuration = self.sensors[sensor_id]
+                    if self.mqtt_connected: 
+                        self.subscribe_topic(configuration["topic"])
+                    else: 
+                        self.topics_to_subscribe.append(configuration["topic"])

@@ -42,6 +42,6 @@ modules:
         placeholder: /sensors/in
         required: true
 package: egeoffrey-service-mqtt
-revision: 9
+revision: 10
 tags: service mqtt
 version: 1.0

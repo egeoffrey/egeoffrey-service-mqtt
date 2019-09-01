@@ -35,13 +35,13 @@ modules:
         name: topic
         placeholder: /sensors/out
         required: true
-      passive:
+      push:
       - description: The topic to subscribe
         format: string
         name: topic
         placeholder: /sensors/in
         required: true
 package: egeoffrey-service-mqtt
-revision: 10
+revision: 11
 tags: service mqtt
 version: 1.0

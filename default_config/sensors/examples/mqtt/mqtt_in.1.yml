@@ -5,5 +5,5 @@ retain: history
 service:
   configuration:
     topic: sensors/sensor1
-  mode: passive
+  mode: push
   name: mqtt

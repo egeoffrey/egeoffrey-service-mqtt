@@ -1,4 +1,4 @@
-branch: development
+branch: master
 description: Interact with sensors through a mqtt broker
 dockerhub: egeoffrey/egeoffrey-service-mqtt
 github: egeoffrey/egeoffrey-service-mqtt
@@ -42,6 +42,6 @@ modules:
         placeholder: /sensors/in
         required: true
 package: egeoffrey-service-mqtt
-revision: 12
+revision: 13
 tags: service mqtt
 version: 1.0

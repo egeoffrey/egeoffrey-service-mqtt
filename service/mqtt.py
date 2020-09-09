@@ -16,6 +16,8 @@
 #   required: topic
 #   optional: 
 
+import json
+
 import paho.mqtt.client as mqtt
 
 from sdk.python.module.service import Service
@@ -53,20 +55,53 @@ class Mqtt(Service):
             
         # receive a callback when receiving a message
         def on_message(client, userdata, msg):
-            # find the sensor matching the topic
-            for sensor_id in self.sensors:
-                sensor = self.sensors[sensor_id]
-                if mqtt.topic_matches_sub(sensor["topic"], msg.topic):
-                    self.log_debug("received "+str(msg.payload)+" for "+sensor_id+" on topic "+str(msg.topic))
-                    # prepare the message
-                    message = Message(self)
-                    message.recipient = "controller/hub"
-                    message.command = "IN"
-                    message.args = sensor_id
-                    message.set("value", msg.payload)
-                    # send the measure to the controller
-                    self.send(message)
-            
+            try:
+                # find the sensor matching the topic
+                for sensor_id in self.sensors:
+                    sensor = self.sensors[sensor_id]
+                    if mqtt.topic_matches_sub(sensor["topic"], msg.topic):
+                        self.log_debug("received "+str(msg.payload)+" for "+sensor_id+" on topic "+str(msg.topic))
+                        # if JSON payload is expected
+                        if "key" in sensor:
+                            try:
+                                data = json.loads(msg.payload)
+                                if sensor["key"] not in data: 
+                                    return
+                                # apply the filter if any
+                                if "filter" in sensor:
+                                    search = {}
+                                    if "&" in sensor["filter"]: key_values = sensor["filter"].split("&")
+                                    else: key_values = [sensor["filter"]]
+                                    for key_value in key_values:
+                                        if "=" not in key_value: continue
+                                        key, value = key_value.split("=")
+                                        search[key] = value
+                                    # check if the output matches the search string
+                                    found = True
+                                    for key, value in search.iteritems():
+                                        # check every key/value pair
+                                        if key not in data: found = False
+                                        if key in data and str(value).lower() != str(data[key]).lower(): found = False
+                                    # not matching, skip to the next sensor
+                                    if not found: continue
+                                value = data[sensor["key"]]
+                            except Exception,e:
+                                self.log_warning("Unable to parse JSON payload "+str(msg.payload)+": "+exception.get(e))
+                                return
+                        # else consider the entire payload
+                        else:
+                            value =  msg.payload
+                        # prepare the message
+                        message = Message(self)
+                        message.recipient = "controller/hub"
+                        message.command = "IN"
+                        message.args = sensor_id
+                        message.set("value", value)
+                        # send the measure to the controller
+                        self.send(message)
+            except Exception,e:
+                self.log_warning("runtime error during on_message(): "+exception.get(e))
+                return
         # connect to the gateway
         try: 
             self.log_info("Connecting to MQTT gateway on "+self.config["hostname"]+":"+str(self.config["port"]))
@@ -98,7 +133,15 @@ class Mqtt(Service):
             if not self.mqtt_connected: return
             if not self.is_valid_configuration(["topic", "value"], message.get_data()): return
             topic = message.get("topic")
-            data = message.get("value")
+            # if the output is a json message, build it
+            if message.has("key"):
+                data = {}
+                data[message.get("key")] = message.get("value")
+                data = json.dumps(data)
+            elif message.has("template"):
+                data = message.get("template").replace("%value%", str(message.get("value")))
+            else:
+                data = message.get("value")
             # send the message
             self.log_info("sending message "+str(data)+" to "+topic)
             self.client.publish(topic, str(data))

@@ -35,13 +35,35 @@ modules:
         name: topic
         placeholder: /sensors/out
         required: true
+      - description: Send a JSON payload with the value set into the following attribute
+        format: string
+        name: key
+        placeholder: state
+        required: false
+      - description: Send a custom payload with the placeholder %value% replaced by
+          the actual value
+        format: string
+        name: template
+        placeholder: '{"warning": {"duration": 10, "mode": "%value%", "strobe": true}}'
+        required: false
       push:
       - description: The topic to subscribe
         format: string
         name: topic
         placeholder: /sensors/in
         required: true
+      - description: The key of the JSON payload whose measure has to be extracted
+        format: string
+        name: key
+        placeholder: temperature
+        required: false
+      - description: Filter in only a subset of data based on conditions provided
+          in the format key1=value1&key2=value2 (for JSON input only)
+        format: string
+        name: filter
+        placeholder: action=rotate_right
+        required: false
 package: egeoffrey-service-mqtt
-revision: 14
+revision: 15
 tags: service mqtt
 version: 1.0

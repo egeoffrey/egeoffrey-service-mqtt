@@ -64,6 +64,6 @@ modules:
         placeholder: action=rotate_right
         required: false
 package: egeoffrey-service-mqtt
-revision: 15
+revision: 1
 tags: service mqtt
-version: 1.0
+version: 1.1

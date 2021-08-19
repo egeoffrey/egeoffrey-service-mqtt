@@ -20,10 +20,10 @@ import json
 
 import paho.mqtt.client as mqtt
 
-from sdk.python.module.service import Service
-from sdk.python.module.helpers.message import Message
+from sdk.python3.module.service import Service
+from sdk.python3.module.helpers.message import Message
 
-import sdk.python.utils.exceptions as exception
+import sdk.python3.utils.exceptions as exception
 
 class Mqtt(Service):
     # What to do when initializing
@@ -65,7 +65,8 @@ class Mqtt(Service):
                         if "key" in sensor:
                             try:
                                 data = json.loads(msg.payload)
-                                if sensor["key"] not in data: 
+                                # ensure the data received is structured correctly
+                                if type(data) is not dict or sensor["key"] not in data: 
                                     return
                                 # apply the filter if any
                                 if "filter" in sensor:
@@ -78,14 +79,14 @@ class Mqtt(Service):
                                         search[key] = value
                                     # check if the output matches the search string
                                     found = True
-                                    for key, value in search.iteritems():
+                                    for key, value in search.items():
                                         # check every key/value pair
                                         if key not in data: found = False
                                         if key in data and str(value).lower() != str(data[key]).lower(): found = False
                                     # not matching, skip to the next sensor
                                     if not found: continue
                                 value = data[sensor["key"]]
-                            except Exception,e:
+                            except Exception as e:
                                 self.log_warning("Unable to parse JSON payload "+str(msg.payload)+": "+exception.get(e))
                                 return
                         # else consider the entire payload
@@ -99,7 +100,7 @@ class Mqtt(Service):
                         message.set("value", value)
                         # send the measure to the controller
                         self.send(message)
-            except Exception,e:
+            except Exception as e:
                 self.log_warning("runtime error during on_message(): "+exception.get(e))
                 return
         # connect to the gateway
@@ -108,7 +109,7 @@ class Mqtt(Service):
             password = self.config["password"] if "password" in self.config else ""
             if "username" in self.config: self.client.username_pw_set(self.config["username"], password=password)
             self.client.connect(self.config["hostname"], self.config["port"], 60)
-        except Exception,e:
+        except Exception as e:
             self.log_warning("Unable to connect to the MQTT gateway "+self.config["hostname"]+":"+str(self.config["port"])+": "+exception.get(e))
             return
         # set callbacks
@@ -118,7 +119,7 @@ class Mqtt(Service):
         # TODO: reconnect
         try: 
             self.client.loop_start()
-        except Exception,e: 
+        except Exception as e: 
             self.log_error("Unexpected runtime error: "+exception.get(e))
     
     # What to do when shutting down
